@@ -410,11 +410,8 @@ function Home() {
           {navItems.map((item) => (
             <a key={item.id} className={activeSection === item.id ? 'nav-link nav-link-active' : 'nav-link'} href={item.href} onClick={() => setMobileOpen(false)}>{item.label}</a>
           ))}
-          <button className="mobile-account" onClick={() => { setDialog('account'); setMobileOpen(false) }}>Login / Sign Up <ArrowRight size={15} /></button>
         </nav>
         <div className="header-actions">
-          <button className="login-button" onClick={() => { setAccountMode('login'); setDialog('account') }}>Login / Sign Up</button>
-          <button className="account-icon" aria-label="Open account sign-in" onClick={() => { setAccountMode('login'); setDialog('account') }}><UserRound size={17} /></button>
           <button className="menu-button" aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={mobileOpen} onClick={() => setMobileOpen(!mobileOpen)}>{mobileOpen ? <X /> : <Menu />}</button>
         </div>
       </header>
@@ -490,7 +487,7 @@ function Home() {
         <Newsletter />
       </main>
 
-      <Footer onAccount={() => { setAccountMode('signup'); setDialog('account') }} />
+      <Footer />
 
       {dialog === 'story' && <Modal title="A different point of view" onClose={() => setDialog(null)}><div className="story-modal-image"><img src="https://images.unsplash.com/photo-1769945967065-ec805ecc7e6b?auto=format&fit=crop&w=1200&q=85" alt="An aircraft passing through the clouds" /><span className="story-modal-play"><CirclePlay size={38} /></span></div><span className="eyebrow"><span className="eyebrow-line" />THE MMM AIRWAYS STORY</span><p>Every journey is a chance to feel closer to somewhere — and to someone. We’re here to make every mile matter.</p><button className="button button-blue" onClick={() => { setDialog(null); document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }) }}>Get to know us <ArrowRight size={16} /></button></Modal>}
       {dialog === 'account' && <Modal title={accountMode === 'login' ? 'Welcome aboard' : 'Start your journey'} onClose={() => setDialog(null)}><AccountForm mode={accountMode} setMode={setAccountMode} /></Modal>}
@@ -593,16 +590,10 @@ function FlightSearch() {
 }
 
 function DestinationsSection() {
-  const [filter, setFilter] = useState<'all' | 'Domestic' | 'International'>('all')
-  const [viewMode, setViewMode] = useState<'cylinder' | 'grid'>('cylinder')
   const [rotationAngle, setRotationAngle] = useState(0)
   const [isSpinning, setIsSpinning] = useState(true)
 
-  const filteredDestinations = destinations.filter(
-    (d) => filter === 'all' || d.region === filter
-  )
-
-  const N = filteredDestinations.length
+  const N = destinations.length
 
   const handlePrev = () => {
     setIsSpinning(false)
@@ -626,113 +617,60 @@ function DestinationsSection() {
           </div>
           <div className="section-heading-aside">
             <p>Discover 10 domestic and 2 international hub destinations across India, UAE &amp; Singapore.</p>
-            <div className="destination-controls-row">
-              <div className="filter-tabs">
-                <button
-                  type="button"
-                  className={`filter-tab ${filter === 'all' ? 'active' : ''}`}
-                  onClick={() => { setFilter('all'); setRotationAngle(0); }}
-                >
-                  All ({destinations.length})
-                </button>
-                <button
-                  type="button"
-                  className={`filter-tab ${filter === 'Domestic' ? 'active' : ''}`}
-                  onClick={() => { setFilter('Domestic'); setRotationAngle(0); }}
-                >
-                  Domestic (10)
-                </button>
-                <button
-                  type="button"
-                  className={`filter-tab ${filter === 'International' ? 'active' : ''}`}
-                  onClick={() => { setFilter('International'); setRotationAngle(0); }}
-                >
-                  International (2)
-                </button>
-              </div>
-
-              <div className="view-toggle">
-                <button
-                  type="button"
-                  className={`view-btn ${viewMode === 'cylinder' ? 'active' : ''}`}
-                  onClick={() => setViewMode('cylinder')}
-                  title="3D Cylinder Showcase"
-                >
-                  <Sparkles size={13} /> 3D View
-                </button>
-                <button
-                  type="button"
-                  className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
-                  onClick={() => setViewMode('grid')}
-                  title="Grid Layout"
-                >
-                  Grid View
-                </button>
-              </div>
-            </div>
           </div>
         </div>
 
-        {viewMode === 'cylinder' ? (
-          <div className="scene-container">
-            <button
-              type="button"
-              className="cylinder-nav prev"
-              aria-label="Previous destination"
-              onClick={handlePrev}
+        <div className="scene-container">
+          <button
+            type="button"
+            className="cylinder-nav prev"
+            aria-label="Previous destination"
+            onClick={handlePrev}
+          >
+            <ChevronLeft size={22} />
+          </button>
+
+          <div className="scene">
+            <div
+              className={`a3d ${isSpinning ? 'auto-spin' : ''}`}
+              style={
+                {
+                  '--n': N,
+                  transform: isSpinning ? undefined : `rotateY(${rotationAngle}deg)`,
+                } as React.CSSProperties
+              }
             >
-              <ChevronLeft size={22} />
-            </button>
-
-            {/* Reference 3D Cylinder Scene HTML structure */}
-            <div className="scene">
-              <div
-                className={`a3d ${isSpinning ? 'auto-spin' : ''}`}
-                style={
-                  {
-                    '--n': N,
-                    transform: isSpinning ? undefined : `rotateY(${rotationAngle}deg)`,
-                  } as React.CSSProperties
-                }
-              >
-                {filteredDestinations.map((destination, i) => (
-                  <div
-                    key={destination.code}
-                    className="card destination-3d-card"
-                    style={{ '--i': i } as React.CSSProperties}
-                  >
-                    <DestinationCard destination={destination} index={i} />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <button
-              type="button"
-              className="cylinder-nav next"
-              aria-label="Next destination"
-              onClick={handleNext}
-            >
-              <ChevronRight size={22} />
-            </button>
-
-            <div className="cylinder-play-controls">
-              <button
-                type="button"
-                className="spin-toggle-btn"
-                onClick={() => setIsSpinning(!isSpinning)}
-              >
-                {isSpinning ? 'Pause Rotation' : 'Auto Rotate'}
-              </button>
+              {destinations.map((destination, i) => (
+                <div
+                  key={destination.code}
+                  className="card destination-3d-card"
+                  style={{ '--i': i } as React.CSSProperties}
+                >
+                  <DestinationCard destination={destination} index={i} />
+                </div>
+              ))}
             </div>
           </div>
-        ) : (
-          <div className="destination-grid">
-            {filteredDestinations.map((destination, index) => (
-              <DestinationCard key={destination.code} destination={destination} index={index} />
-            ))}
+
+          <button
+            type="button"
+            className="cylinder-nav next"
+            aria-label="Next destination"
+            onClick={handleNext}
+          >
+            <ChevronRight size={22} />
+          </button>
+
+          <div className="cylinder-play-controls">
+            <button
+              type="button"
+              className="spin-toggle-btn"
+              onClick={() => setIsSpinning(!isSpinning)}
+            >
+              {isSpinning ? 'Pause Rotation' : 'Auto Rotate'}
+            </button>
           </div>
-        )}
+        </div>
       </div>
     </section>
   )
@@ -1108,8 +1046,8 @@ function Newsletter() {
   return <section className="newsletter-section section-pad" id="newsletter"><div className="page-width newsletter-layout"><div className="newsletter-copy" data-reveal><span className="eyebrow eyebrow-light"><span className="eyebrow-line" />A NOTE FROM MMM</span><h2>Stay Ahead of<br /><em>Your Journey</em></h2><p>Travel inspiration, considered offers and the latest from MMM Airways — delivered occasionally, never excessively.</p></div><form className="newsletter-form" onSubmit={submit} noValidate><label htmlFor="newsletter-email">YOUR EMAIL ADDRESS</label><div className="newsletter-input-row"><input id="newsletter-email" type="email" value={email} onChange={(event) => { setEmail(event.target.value); setMessage(''); setError('') }} placeholder="Your email address" autoComplete="email" /><button className="button button-light" type="submit">Subscribe <ArrowRight size={17} /></button></div>{error && <p className="newsletter-feedback" role="alert">{error}</p>}{message && <p className="newsletter-feedback" role="status"><Check size={15} />{message}</p>}</form></div></section>
 }
 
-function Footer({ onAccount }: { onAccount: () => void }) {
-  return <footer className="site-footer" id="contact"><div className="page-width"><div className="footer-top"><a className="brand-lockup footer-brand" href="#home"><img src="/logo-light.png" alt="MMM Airways" className="brand-logo-img footer-logo-img" /></a><p className="footer-promise">Thoughtful travel.<br /><span>Remarkable journeys.</span></p></div><div className="footer-columns"><div><h2>Quick Links</h2><a href="#home">Home</a><a href="#book">Book Flight</a><a href="#destinations">Destinations</a><a href="#about">About Us</a><a href="#contact">Contact</a></div><div><h2>Support</h2><a href="#contact">Help Center</a><a href="#contact">FAQs</a><a href="#contact">Terms &amp; Conditions</a><a href="#contact">Privacy Policy</a></div><div><h2>Company</h2><a href="#about">About MMM Airways</a><a href="#about">Careers</a><a href="#offers">News &amp; Offers</a><a href="#experience">Sustainability</a></div><div><h2>Follow Us</h2><p className="social-list">Facebook <span>·</span> Instagram <span>·</span> X<br />LinkedIn <span>·</span> YouTube</p><button className="footer-login" onClick={onAccount}>Join MMM Airways <ArrowRight size={15} /></button></div></div><div className="footer-bottom"><span>© 2026 MMM Airways. All rights reserved.</span><span>Designed for the journey ahead&nbsp; <Plane size={13} /></span></div></div></footer>
+function Footer() {
+  return <footer className="site-footer" id="contact"><div className="page-width"><div className="footer-top"><a className="brand-lockup footer-brand" href="#home"><img src="/logo-light.png" alt="MMM Airways" className="brand-logo-img footer-logo-img" /></a><p className="footer-promise">Thoughtful travel.<br /><span>Remarkable journeys.</span></p></div><div className="footer-columns"><div><h2>Quick Links</h2><a href="#home">Home</a><a href="#book">Book Flight</a><a href="#destinations">Destinations</a><a href="#about">About Us</a><a href="#contact">Contact</a></div><div><h2>Support</h2><a href="#contact">Help Center</a><a href="#contact">FAQs</a><a href="#contact">Terms &amp; Conditions</a><a href="#contact">Privacy Policy</a></div><div><h2>Company</h2><a href="#about">About MMM Airways</a><a href="#about">Careers</a><a href="#offers">News &amp; Offers</a><a href="#experience">Sustainability</a></div><div><h2>Follow Us</h2><p className="social-list">Facebook <span>·</span> Instagram <span>·</span> X<br />LinkedIn <span>·</span> YouTube</p></div></div><div className="footer-bottom"><span>© 2026 MMM Airways. All rights reserved.</span><span>Designed for the journey ahead&nbsp; <Plane size={13} /></span></div></div></footer>
 }
 
 function AccountForm({ mode, setMode }: { mode: 'login' | 'signup'; setMode: (mode: 'login' | 'signup') => void }) {
