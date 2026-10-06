@@ -1258,6 +1258,40 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
   display: none;
 }
 
+.leadership-header-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 36px;
+}
+
+.leadership-header-block .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.leadership-header-block h2 {
+  font-size: clamp(34px, 4.2vw, 54px);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+  color: #07182d;
+  margin: 0 0 14px;
+}
+
+.leadership-header-block p {
+  color: #687b8f;
+  font-size: 14px;
+  line-height: 1.75;
+  margin: 0;
+  max-width: 580px;
+}
+
 .leadership-carousel-container {
   width: 100%;
   max-width: 1200px;

@@ -958,10 +958,10 @@ function LeadershipSection() {
     <section className="leadership-carousel-section section-pad bg-secondary/20" id="leadership">
       <div className="about-title-bg" aria-hidden="true">OUR LEADERSHIP</div>
       <div className="page-width relative z-10">
-        <div className="section-heading text-center items-center" data-reveal>
-          <span className="eyebrow"><span className="eyebrow-line" />LEADERSHIP &amp; ADVISORY BOARD</span>
+        <div className="leadership-header-block" data-reveal>
+          <span className="eyebrow"><span className="eyebrow-line" />LEADERSHIP &amp; ADVISORY BOARD<span className="eyebrow-line" /></span>
           <h2>Guided by Industry Pioneers</h2>
-          <p className="max-w-xl text-muted-foreground text-sm mx-auto">
+          <p>
             Experienced aviation executives, regulatory authorities, and financial advisors driving MMM Airways forward.
           </p>
         </div>
